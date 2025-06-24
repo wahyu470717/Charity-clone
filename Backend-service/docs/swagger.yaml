@@ -1,0 +1,337 @@
+basePath: /api/v1
+definitions:
+  request.UpdateCompanyProfileRequest:
+    properties:
+      address:
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      website:
+        type: string
+    required:
+    - address
+    - description
+    - email
+    - name
+    - phone
+    - website
+    type: object
+  response.APIResponse:
+    properties:
+      data: {}
+      meta:
+        $ref: '#/definitions/response.Meta'
+    type: object
+  response.CampaignResponse:
+    properties:
+      campaign_id:
+        type: integer
+      content:
+        type: string
+      id:
+        type: integer
+      image_url:
+        type: string
+      title:
+        type: string
+    type: object
+  response.DonationResponse:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: string
+      id:
+        type: integer
+      is_anonymous:
+        type: boolean
+    type: object
+  response.Meta:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  utils.CompanyProfile:
+    properties:
+      address:
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      website:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API for Share The Meal donation platform
+  title: Share The Meal API
+  version: "1.0"
+paths:
+  /cms/campaigns:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create a new campaign (Superadmin only)
+      parameters:
+      - description: Campaign title
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: Campaign description
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: Target amount
+        in: formData
+        name: target
+        required: true
+        type: number
+      - description: Campaign image
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.CampaignResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.APIResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new campaign
+      tags:
+      - CMS
+  /cms/campaigns/{id}:
+    delete:
+      description: Delete a campaign (Superadmin only)
+      parameters:
+      - description: Campaign ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.APIResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a campaign
+      tags:
+      - CMS
+    put:
+      consumes:
+      - multipart/form-data
+      description: Update an existing campaign (Superadmin only)
+      parameters:
+      - description: Campaign ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Campaign title
+        in: formData
+        name: title
+        type: string
+      - description: Campaign description
+        in: formData
+        name: description
+        type: string
+      - description: Target amount
+        in: formData
+        name: target
+        type: number
+      - description: Campaign image
+        in: formData
+        name: image
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.CampaignResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.APIResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a campaign
+      tags:
+      - CMS
+  /cms/campaigns/{id}/stats:
+    get:
+      description: Get statistics for a campaign (Superadmin only)
+      parameters:
+      - description: Campaign ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.CampaignResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.APIResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.APIResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/response.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.APIResponse'
+      security:
+      - BearerAuth: []
+      summary: Get campaign statistics
+      tags:
+      - CMS
+  /cms/company-profile:
+    put:
+      consumes:
+      - application/json
+      description: Update the company profile (Superadmin only)
+      parameters:
+      - description: Company profile
+        in: body
+        name: profile
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateCompanyProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.APIResponse'
+      security:
+      - BearerAuth: []
+      summary: Update company profile
+      tags:
+      - Company
+  /cms/donations:
+    get:
+      description: Get all donations (Superadmin only)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.APIResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/response.DonationResponse'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.APIResponse'
+      security:
+      - BearerAuth: []
+      summary: List all donations
+      tags:
+      - CMS
+  /public/company-profile:
+    get:
+      description: Get the company profile information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/utils.CompanyProfile'
+              type: object
+      summary: Get company profile
+      tags:
+      - Company
+securityDefinitions:
+  bearerToken:
+    description: Type "Bearer" followed by a space and JWT token
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
