@@ -19,7 +19,7 @@ const ContactPage: React.FC = () => {
       <Stack 
         direction={{ xs: 'column', sm: 'row' }}
         spacing={4}
-        sx={{   ''
+        sx={{
           flexWrap: { sm: 'wrap', md: 'nowrap' },
           justifyContent: 'center',
           alignItems: 'stretch'
